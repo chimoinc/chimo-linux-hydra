@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Función para mostrar un mensaje de error
+error() {
+  zenity --error --text="$1"
+}
+
+# Función para limpiar archivos temporales
+limpiar_temporales() {
+  # Comando para eliminar archivos temporales (ajusta según tu sistema)
+  sudo rm -rf /tmp/*
+  zenity --info --text="Archivos temporales eliminados."
+}
+
+# Función para limpiar logs antiguos
+limpiar_logs() {
+  # Comando para eliminar logs antiguos (ajusta según los directorios de logs)
+  sudo find /var/log -type f -mtime +30 -delete
+  zenity --info --text="Logs antiguos eliminados."
+}
+
+# Función para eliminar paquetes obsoletos
+limpiar_paquetes() {
+  # Comando para eliminar paquetes obsoletos
+  sudo apt autoremove
+  zenity --info --text="Paquetes obsoletos eliminados."
+}
+
+# Menú principal
+opcion=$(zenity --list --title="Limpiar Disco" --text="Selecciona una opción:" \
+               --radiolist --column=" " --column="" \
+               TRUE  "Limpiar archivos temporales" \
+               TRUE  "Limpiar logs antiguos" \
+               TRUE  "Eliminar paquetes obsoletos")
+
+# Ejecutar las funciones según la opción seleccionada
+case $opcion in
+  "Limpiar archivos temporales")
+    limpiar_temporales
+    ;;
+  "Limpiar logs antiguos")
+    limpiar_logs
+    ;;
+  "Eliminar paquetes obsoletos")
+    limpiar_paquetes
+    ;;
+  *)
+    error "Opción inválida."
+    ;;
+esac
